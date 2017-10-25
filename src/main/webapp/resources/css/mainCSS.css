@@ -1,0 +1,64 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 06-Dec-2016, 03:16:17
+    Author     : ASUS
+*/
+body{
+    background-color: lightcyan;
+}
+.imageStyle{
+    width: 250px;
+    height: 100px;
+    float:left;
+    margin: 5px;
+}
+
+.verticalLine{
+    border-right: dotted #838687;
+    margin-right: 10px;
+}
+.horizontalLine{
+    align-self: center;
+    margin-top:10px;
+    padding:10px;
+    background-color: #DAE3E6;
+}
+.historyTableStyle{    
+    border: 1px solid black;
+    width: 350px;
+    height: 300px;
+}
+.historyStyle{
+    align-self: center;
+    margin-top:10px;
+    padding:10px;
+    background-color: #DAE3E6;
+}
+
+.mainTable{
+    margin:5px;
+    border-collapse:collapse;
+}
+.tableHeader{
+    text-align:center;
+    background:none repeat scroll 0 0 #B3B3B3;
+    color : #393A3B;
+    border-bottom:1px solid #BBBBBB;
+    padding:5px;
+}
+.tableRowEven{
+    text-align:center;
+    background:none repeat scroll 0 0 #C8CDCF;
+    border-top:1px solid #BBBBBB;
+    padding: 5px;
+}
+.tableRowOdd{
+    text-align:center;
+    background:none repeat scroll 0 0 #F9F9F9;
+    border-top:1px solid #BBBBBB;
+    padding: 5px;
+}

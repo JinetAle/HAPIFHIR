@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"    
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head> 
+        <link href="#{request.contextPath}/resources/css/bootstrap.css" rel="stylesheet" />   
+        <link href="#{request.contextPath}/resources/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <script src="#{request.contextPath}/resources/js/bootstrap.js" type="text/javascript"></script>
+        <script src="#{request.contextPath}/resources/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+        <link href="resources/css/mainCSS.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+
+    <h:body>
+        <div>
+            <nav class="navbar navbar-static-top navbar-dark bg-inverse">
+                <!--<h:graphicImage value="resources/image/fhir.png" class="imageStyle"/> -->
+                <a class="navbar-brand" href="#">FHIR Server System</a>
+            </nav>
+        </div>
+        <div class="jumbotron">
+            <div class="container">
+                <div class="row">
+                    <p style="font-family:'Constantia';font-size:60px;text-align:center;">iHealth</p>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4 verticalLine">
+                            <div class="row">
+                                <h:graphicImage value="resources/image/fhir.png" class="imageStyle"></h:graphicImage>
+                            </div>
+                            <div class="row">
+                                <h4> Select a server: </h4>
+                                <h:form>
+                                    <h:selectOneMenu id="name" class="active" value="#{serverbean.selectedserver}">
+                                        <f:selectItems value="#{serverbean.servers}" />
+                                    </h:selectOneMenu>
+                                    <br/><br/>
+                                    <h:commandButton id="connectButton" value="Connect" styleClass="btn btn-sm btn-info text-md-center" action="#{serverbean.connect()}">
+                                        <f:ajax execute="name" onevent="progressDisplay" render="output getHistory"/>
+                                    </h:commandButton>
+                                </h:form>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">                            
+                            <div class="row" style="text-align:center;">
+                                <h4 class="text-lg-center text-gray-dark" style="padding-top: 10px;">Server Connection Status </h4>
+                                <br/>
+                                <img id="loadingImage" style="display:none;" align="center" src="resources/image/connecting_green.gif" alt=""/>
+                                <h:outputLabel id="output" styleClass="#{serverbean.serverstatuscolor}"  value="#{serverbean.constatus}" ></h:outputLabel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="text-align:center;">
+                    <div class="col-sm-12" id="getHistory" style="display:none">
+                        <h2>Server History</h2>
+                        <br/>
+                        <div class="historyStyle" style="text-align:center;">
+                            <div class="row">
+                                <h:commandButton  value="Get Server History"  styleClass="btn btn-sm btn-info text-md-center" action="#{serverbean.history()}">
+                                    <f:ajax render="historyTable jsonBox" onevent="displayHistory"/>
+                                </h:commandButton>
+                            </div>
+                            <div class="row" style="text-align:center;">
+                                <div class="col-sm-6">
+                                    <h:dataTable id="historyTable" style="display:none;" value="#{serverbean.patients}" var="o" styleClass="mainTable" headerClass="tableHeader" rowClasses="tableRowEven,tableRowOdd" >
+                                        <h:column >
+                                            <f:facet name="header"> Resources</f:facet>
+                                                #{o.resourceName}
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet  name="header">Name</f:facet>
+                                                #{o.name.toArray().stream().toList()}
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet  name="header">Date of Birth</f:facet>
+                                                #{o.birthDate.toLocaleString()}
+                                        </h:column>
+                                        <h:column >
+
+                                            <f:facet  name="header">ID</f:facet>
+                                                #{o.id.idPart}
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+                                <div class="col-sm-1">
+                                </div>
+                                <div class="col-sm-5">                                
+                                    <h:inputTextarea id="jsonBox" style="display:none" cols="52" rows="11" readonly="true"  value="#{serverbean.jsonstring}" />
+                                </div>
+                                <img id="waitingHistory" src="resources/image/waiting_blue.gif" alt="" style="display:none;" align="center"/> 
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+        <div class="container">
+            <!-- Example row of columns -->
+
+            
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>Search Patient</h2> 
+                    <h:form>
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <h:outputLabel id="selectkeyword" value="Search By Patient's "></h:outputLabel>
+                            </div>
+                            <div class="col-sm-8">
+                                <h:selectOneMenu id="keyword" class="active" value="#{serverbean.selectedKeyword}">
+                                    <f:selectItems value="#{serverbean.searchKeyword}" />
+                                    <f:ajax listener="#{serverbean.changeForm}" render="searchPatientBy inputKeyword" />
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <h:outputLabel id="searchPatientBy" value="#{serverbean.keywordLabel}"></h:outputLabel>
+                            </div>
+                            <div class="col-sm-8">                            
+                                <h:inputText id="inputKeyword" value="#{serverbean.keywordInput}" />
+                            </div>
+                        </div>
+                        <h:commandButton value="Search" styleClass="btn btn-sm btn-info text-md-center" action="#{serverbean.search()}">
+                            <f:ajax execute="inputKeyword" render="searchTable" onevent="displaySearch"/>
+                        </h:commandButton>
+                    </h:form>
+                </div>
+                <div class="col-md-8">
+                    <h2>List Patients</h2> 
+                    <h:dataTable id="searchTable" value="#{serverbean.patients}" var="o" styleClass="mainTable" headerClass="tableHeader" rowClasses="tableRowEven,tableRowOdd" style="display:none;" >
+                        <h:column>
+                            <f:facet name="header"> Resources</f:facet>
+                                #{o.resourceName}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">First Name</f:facet>
+                                #{o.getName().get(0).getGiven().get(0).getValue()}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Last Name</f:facet>
+                                #{o.getName().get(0).getFamily().get(0).getValue()}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Date of Birth</f:facet>
+                                #{o.birthDate.toLocaleString()}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">ID</f:facet>
+                                #{o.id.idPart}
+                        </h:column>
+                    </h:dataTable>
+                    <img id="waitingImg" src="resources/image/waiting_blue.gif" alt="" style="display:none;" align="center"/>  
+                </div>
+            </div>
+            <hr/>
+            <footer>
+                <p>&copy; MSc Software Engineer Students 2016-2017</p>
+            </footer>
+        </div>  <!-- /container -->
+    </h:body>
+    <script type="text/javascript">
+        function progressDisplay(data) {
+            var progressStatus = data.status;
+            switch (progressStatus) {
+                case "begin":
+                    $("#loadingImage").show();
+                    $("#output").hide();
+                    $("#getHistory").hide();
+                    $("#historyTable").hide();
+                    $("#jsonBox").hide();
+                    break;
+                case "success":
+                    $("#loadingImage").hide();
+                    $("#getHistory").show();
+            }
+        }
+
+        function displayHistory(historyStatus) {
+            var progressStatus = historyStatus.status;
+            switch (progressStatus) {
+                case "begin":
+                    $("#waitingHistory").show();
+                    $("#historyTable").hide();
+                    $("#jsonBox").hide();
+                    break;
+                case "success":
+                    $("#waitingHistory").hide();
+                    $("#historyTable").show();
+                    $("#jsonBox").show();
+                    break;
+            }
+        }
+
+        function displaySearch(searchStatus) {
+            var progressStatus = searchStatus.status;
+            switch (progressStatus) {
+                case "begin":
+                    $("#waitingImg").show();
+                    $("#searchTable").hide();
+                    break;
+                case "success":
+                    $("#waitingImg").hide();
+                    $("#searchTable").show();
+                    break;
+            }
+        }
+    </script>
+</html>
